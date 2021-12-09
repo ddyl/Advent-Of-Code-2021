@@ -1,4 +1,4 @@
-from typing import Iterable, Tuple
+from typing import Tuple, List
 from re import findall
 
 class CoorPair:
@@ -54,12 +54,12 @@ class CoorPair:
 
 
 
-def get_input() -> Iterable[CoorPair]:
+def get_input() -> List[CoorPair]:
     """
     Reads the input file and returns all coordinate pairs as a list of CoorPair instances
 
     Returns:
-        Iterable[CoorPair]: List of coordinate pairs
+        List[CoorPair]: List of coordinate pairs
     """
     coor_pairs = []
     with open("Day_05_input.txt") as file:
@@ -99,7 +99,7 @@ def generate_all_points (pair: CoorPair) -> set[Tuple[int]]:
 
             
 
-def get_overlapping_coordinates(pair1: CoorPair, pair2: CoorPair) -> Iterable[Tuple[int, int]]:
+def get_overlapping_coordinates(pair1: CoorPair, pair2: CoorPair) -> List[Tuple[int, int]]:
     """
     Given two coordinate pairs, generates all possible points for each pair and finds the intersecting coordinates
 
@@ -108,22 +108,25 @@ def get_overlapping_coordinates(pair1: CoorPair, pair2: CoorPair) -> Iterable[Tu
         pair2 (CoorPair): The second coordinate pairs
 
     Returns:
-        Iterable[Tuple[int, int]]: All intersecting coordinates between the two pairs
+        List[Tuple[int, int]]: All intersecting coordinates between the two pairs
     """
-    return [coordinate for coordinate in generate_all_points(pair1).intersection(generate_all_points(pair2))]
+    set1 = generate_all_points(pair1)
+    set2 = generate_all_points(pair2)
+
+    return [coor for coor in set1 if coor in set2]
 
     
-def count_overlapping_coordinates (pairs: Iterable[CoorPair], include_diagonals: bool) -> int:
+def count_overlapping_coordinates (pairs: List[CoorPair], include_diagonals: bool) -> int:
     """
     Generates a set of all overlapping coordinates and returns the number of coordinates. A point that overlaps three times still gets 
     counted once
 
     Args:
-        pairs (Iterable[CoorPair]): The list of coordinate pairs, represented by a list of CoorPair class instances
+        pairs (List[CoorPair]): The list of coordinate pairs, represented by a list of CoorPair class instances
         include_diagonals (bool): Indicates whether diagonal pairs should be included
 
     Returns:
-        int: THe number of overlapping coordinates
+        int: The number of overlapping coordinates
     """
     overlapping_coordinates = set()
     for i, pair in enumerate(pairs):
