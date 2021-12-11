@@ -1,12 +1,14 @@
 from typing import Tuple, List
 from re import findall
 
+
 class CoorPair:
     """
-    Class to hold all coordinate pairs. The coordinate with minimum x (or minimum y if both x coordinates are the same) will 
+    Class to hold all coordinate pairs. The coordinate with minimum x (or minimum y if both x coordinates are the same) will
     always come first, meaning that any calculations for diagonal lines will need to handle positive and negative slopes separately.
     """
-    def __init__ (self, x1: int, y1: int, x2: int, y2: int):
+
+    def __init__(self, x1: int, y1: int, x2: int, y2: int):
         self.x1 = None
         self.x2 = None
         self.y1 = None
@@ -15,9 +17,9 @@ class CoorPair:
         self.vertical = False
         self.diagonal = False
 
-        if (x1 == x2):
+        if x1 == x2:
             self.vertical = True
-            if (y1 < y2):
+            if y1 < y2:
                 self.x1 = x1
                 self.y1 = y1
                 self.x2 = x2
@@ -27,9 +29,9 @@ class CoorPair:
                 self.y1 = y2
                 self.x2 = x1
                 self.y2 = y1
-        elif (y1 == y2):
+        elif y1 == y2:
             self.horizontal = True
-            if (x1 < x2):
+            if x1 < x2:
                 self.x1 = x1
                 self.y1 = y1
                 self.x2 = x2
@@ -41,7 +43,7 @@ class CoorPair:
                 self.y2 = y1
         else:
             self.diagonal = True
-            if (x1 < x2):
+            if x1 < x2:
                 self.x1 = x1
                 self.y1 = y1
                 self.x2 = x2
@@ -51,7 +53,6 @@ class CoorPair:
                 self.y1 = y2
                 self.x2 = x1
                 self.y2 = y1
-
 
 
 def get_input() -> List[CoorPair]:
@@ -65,11 +66,13 @@ def get_input() -> List[CoorPair]:
     with open("Day_05_input.txt") as file:
         for line in file.readlines():
             coors = findall("[0-9]+", line)
-            coor_pairs.append(CoorPair(int(coors[0]), int(coors[1]), int(coors[2]), int(coors[3])))
+            coor_pairs.append(
+                CoorPair(int(coors[0]), int(coors[1]), int(coors[2]), int(coors[3]))
+            )
     return coor_pairs
 
 
-def generate_all_points (pair: CoorPair) -> set[Tuple[int]]:
+def generate_all_points(pair: CoorPair) -> set[Tuple[int]]:
     """
     Given a CoorPair instance, will generate all possible points as a set of tuples
 
@@ -81,25 +84,26 @@ def generate_all_points (pair: CoorPair) -> set[Tuple[int]]:
     """
 
     # Handle the case when the line is a horizontal line
-    if (pair.horizontal == True):
+    if pair.horizontal == True:
         return {(x, pair.y1) for x in range(pair.x1, pair.x2 + 1)}
 
     # Handle the case when the line is a vertical line
-    if (pair.vertical == True):
+    if pair.vertical == True:
         return {(pair.x1, y) for y in range(pair.y1, pair.y2 + 1)}
-    
-    if (pair.diagonal == True):
+
+    if pair.diagonal == True:
         # Handle the case when the diagonal line is a positive line
-        if (pair.y1 < pair.y2):
+        if pair.y1 < pair.y2:
             return {(pair.x1 + i, pair.y1 + i) for i in range(0, pair.y2 - pair.y1 + 1)}
-        
+
         # Handle the case when the diagonal line is a positive line
-        if (pair.y1 > pair.y2):
+        if pair.y1 > pair.y2:
             return {(pair.x1 + i, pair.y1 - i) for i in range(0, pair.y1 - pair.y2 + 1)}
 
-            
 
-def get_overlapping_coordinates(pair1: CoorPair, pair2: CoorPair) -> List[Tuple[int, int]]:
+def get_overlapping_coordinates(
+    pair1: CoorPair, pair2: CoorPair
+) -> List[Tuple[int, int]]:
     """
     Given two coordinate pairs, generates all possible points for each pair and finds the intersecting coordinates
 
@@ -115,10 +119,12 @@ def get_overlapping_coordinates(pair1: CoorPair, pair2: CoorPair) -> List[Tuple[
 
     return [coor for coor in set1 if coor in set2]
 
-    
-def count_overlapping_coordinates (pairs: List[CoorPair], include_diagonals: bool) -> int:
+
+def count_overlapping_coordinates(
+    pairs: List[CoorPair], include_diagonals: bool
+) -> int:
     """
-    Generates a set of all overlapping coordinates and returns the number of coordinates. A point that overlaps three times still gets 
+    Generates a set of all overlapping coordinates and returns the number of coordinates. A point that overlaps three times still gets
     counted once
 
     Args:
@@ -130,25 +136,30 @@ def count_overlapping_coordinates (pairs: List[CoorPair], include_diagonals: boo
     """
     overlapping_coordinates = set()
     for i, pair in enumerate(pairs):
-        while (i < len(pairs) - 1):
+        while i < len(pairs) - 1:
             i += 1
             overlaps = set()
-            if (include_diagonals == False):
-                if (pair.diagonal == False and pairs[i].diagonal == False):
+            if include_diagonals == False:
+                if pair.diagonal == False and pairs[i].diagonal == False:
                     overlaps = get_overlapping_coordinates(pair, pairs[i])
             else:
                 overlaps = get_overlapping_coordinates(pair, pairs[i])
             for overlap in overlaps:
                 overlapping_coordinates.add(overlap)
 
-    return len(overlapping_coordinates)   
+    return len(overlapping_coordinates)
 
 
-def main ():
+def main():
     pairs = get_input()
-    print ("Part 1 solution:", count_overlapping_coordinates(pairs, include_diagonals=False))
-    print ("Part 2 solution:", count_overlapping_coordinates(pairs, include_diagonals=True))
-    
+    print(
+        "Part 1 solution:",
+        count_overlapping_coordinates(pairs, include_diagonals=False),
+    )
+    print(
+        "Part 2 solution:", count_overlapping_coordinates(pairs, include_diagonals=True)
+    )
 
-if (__name__ == "__main__"):
+
+if __name__ == "__main__":
     main()
